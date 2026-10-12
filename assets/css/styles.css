@@ -511,3 +511,13 @@ a { color: inherit; text-decoration: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ───────── Idioma ───────── */
+.nav__end { display: flex; align-items: center; gap: 8px; }
+.nav__lang {
+  min-height: 34px; min-width: 40px; padding: 0 10px;
+  border-radius: 999px; border: 1px solid var(--line);
+  background: transparent; color: var(--text);
+  font: inherit; font-size: 13px; font-weight: 700; letter-spacing: .02em; cursor: pointer;
+}
+.nav__lang:hover { background: var(--accent-soft); }

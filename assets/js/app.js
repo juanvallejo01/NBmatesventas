@@ -2,18 +2,19 @@
   'use strict';
 
   var CFG = window.CONFIG || {};
-  var PRODUCTS = window.PRODUCTS || [];
+  // Destilados solo aparecen si hay número de licencia OCM en config.js
+  var CANNABIS_ON = !!String(CFG.cannabisLicense || '').trim();
+  var PRODUCTS = (window.PRODUCTS || []).concat(CANNABIS_ON ? (window.CANNABIS || []).map(function (p) {
+    return Object.assign({ puffs: 0 }, p, { type: 'destilado' });
+  }) : []);
   var COMBOS = window.COMBOS || [];
+  var I18N = window.I18N;
+  var t = I18N.t;
   var byId = {};
   PRODUCTS.forEach(function (p) { byId[p.id] = p; });
 
-  var TYPES = [
-    { id: 'all', label: 'Todos' },
-    { id: 'desechable', label: 'Desechables' },
-    { id: 'recargable', label: 'Recargables' },
-    { id: 'pod', label: 'Pods y baterías' },
-    { id: 'open', label: 'Sistemas open' },
-  ];
+  var TYPES = ['all', 'desechable', 'recargable', 'pod', 'open', 'destilado'];
+  var IMG_FALLBACK = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><rect x="128" y="40" width="44" height="200" rx="14" fill="#8a8a92" opacity=".35"/><rect x="128" y="150" width="44" height="90" rx="14" fill="#c9a227" opacity=".7"/><rect x="138" y="20" width="24" height="26" rx="6" fill="#55555c" opacity=".5"/></svg>');
 
   var ICON_BOLT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>';
   var ICON_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6Z"/></svg>';
@@ -23,15 +24,23 @@
   var order = { item: null, qty: 1, spot: null };
 
   // ───────── Helpers ─────────
-  function money(n) { return '$' + Number(n || 0).toLocaleString('es-CO'); }
-  function num(n) { return Number(n).toLocaleString('es-CO'); }
+  function money(n) {
+    n = Number(n || 0);
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+  }
+  function num(n) { return Number(n).toLocaleString('en-US'); }
+  function pname(p) { return (I18N.lang === 'en' && p.nameEn) || p.name; }
+  function pnote(p) { return (I18N.lang === 'en' && p.noteEn) || p.note || ''; }
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
   function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-  function img(p) { return 'assets/img/products/' + p.id + '.webp'; }
+  function img(p) {
+    if (p.image) return p.image;
+    return p.type === 'destilado' ? IMG_FALLBACK : 'assets/img/products/' + p.id + '.webp';
+  }
   function store(key, val) {
     try {
       if (val === undefined) return localStorage.getItem(key);
@@ -40,9 +49,10 @@
   }
 
   function puffsLabel(p) {
-    if (p.puffs > 0) return num(p.puffs) + ' puffs';
-    if (p.type === 'open') return 'Sistema open';
-    return 'Batería';
+    if (p.type === 'destilado') return [p.size, p.thc ? p.thc + '% THC' : '', p.strain ? t('strain.' + p.strain) : ''].filter(Boolean).join(' · ');
+    if (p.puffs > 0) return num(p.puffs) + ' ' + t('p.puffs');
+    if (p.type === 'open') return t('p.open');
+    return t('p.battery');
   }
   function puffsPill(p) {
     return '<span class="puffs' + (p.puffs > 0 ? '' : ' puffs--muted') + '">' +
@@ -66,19 +76,27 @@
 
   // ───────── Branding & counts ─────────
   document.querySelectorAll('[data-brand]').forEach(function (el) { el.textContent = CFG.brand || el.textContent; });
-  if (CFG.brand) document.title = CFG.brand + ' · Vapes en la U';
-  $('heroCount').textContent = PRODUCTS.length;
+  function setTitle() { document.title = (CFG.brand || 'NBmates') + ' · ' + t('meta.title'); }
+  if ($('heroCount')) $('heroCount').textContent = PRODUCTS.length;
   $('factModels').textContent = PRODUCTS.length;
+  if (CANNABIS_ON) {
+    $('cannabisLegal').hidden = false;
+    $('cannabisLicense').textContent = CFG.cannabisLicense;
+    $('gateText').dataset.i18n = 'gate.textCannabis';
+  }
   var maxPuffs = Math.max.apply(null, PRODUCTS.map(function (p) { return p.puffs; }));
   document.querySelector('.fact:nth-child(2) strong').textContent = Math.round(maxPuffs / 1000) + 'K';
 
   // ───────── Chips ─────────
   var chips = $('chips');
-  chips.innerHTML = TYPES.map(function (t) {
-    var count = t.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(function (p) { return p.type === t.id; }).length;
-    return '<button class="chip" type="button" role="tab" data-type="' + t.id + '" aria-selected="' + (t.id === state.type) + '">' +
-      esc(t.label) + '<small>' + count + '</small></button>';
-  }).join('');
+  function renderChips() {
+    chips.innerHTML = TYPES.map(function (type) {
+      var count = type === 'all' ? PRODUCTS.length : PRODUCTS.filter(function (p) { return p.type === type; }).length;
+      if (!count) return '';
+      return '<button class="chip" type="button" role="tab" data-type="' + type + '" aria-selected="' + (type === state.type) + '">' +
+        esc(t('type.' + type)) + '<small>' + count + '</small></button>';
+    }).join('');
+  }
   chips.addEventListener('click', function (e) {
     var b = e.target.closest('.chip');
     if (!b) return;
@@ -110,17 +128,17 @@
 
   function card(p, i) {
     var badge = '';
-    if (p.soldOut) badge = '<span class="card__badge card__badge--soft">Agotado</span>';
-    else if (p.oldPrice) badge = '<span class="card__badge">Oferta</span>';
+    if (p.soldOut) badge = '<span class="card__badge card__badge--soft">' + esc(t('p.soldOut')) + '</span>';
+    else if (p.oldPrice) badge = '<span class="card__badge">' + esc(t('p.sale')) + '</span>';
     else if (p.tags && p.tags.length) badge = '<span class="card__badge card__badge--soft">' + esc(p.tags[0]) + '</span>';
 
     return '<button type="button" class="card' + (p.soldOut ? ' is-out' : '') + '" data-id="' + p.id + '" style="animation-delay:' + Math.min(i, 12) * 30 + 'ms"' +
-      ' aria-label="Pedir ' + esc(p.name) + ', ' + esc(puffsLabel(p)) + ', ' + money(p.price) + '">' +
+      ' aria-label="' + esc(t('p.order')) + ' ' + esc(pname(p)) + ', ' + esc(puffsLabel(p)) + ', ' + money(p.price) + '">' +
       '<div class="card__media">' + badge +
       '<img src="' + img(p) + '" alt="" loading="lazy" decoding="async" width="300" height="300"></div>' +
       '<div class="card__body">' +
       '<span class="card__brand">' + esc(p.brand) + '</span>' +
-      '<span class="card__name">' + esc(p.name) + '</span>' +
+      '<span class="card__name">' + esc(pname(p)) + '</span>' +
       puffsPill(p) +
       '<div class="card__foot"><span class="price">' + (p.oldPrice ? '<s>' + money(p.oldPrice) + '</s>' : '') + money(p.price) + '</span>' +
       '<span class="card__go" aria-hidden="true">' + ICON_ARROW + '</span></div>' +
@@ -130,7 +148,7 @@
   function render() {
     var list = PRODUCTS.filter(function (p) {
       if (state.type !== 'all' && p.type !== state.type) return false;
-      if (state.q && norm(p.name + ' ' + p.brand + ' ' + p.puffs).indexOf(state.q) === -1) return false;
+      if (state.q && norm(p.name + ' ' + (p.nameEn || '') + ' ' + p.brand + ' ' + p.puffs).indexOf(state.q) === -1) return false;
       return true;
     });
     list = sorted(list);
@@ -143,7 +161,7 @@
     var c = e.target.closest('.card');
     if (!c) return;
     var p = byId[c.dataset.id];
-    if (p.soldOut) { toast('Este vape está agotado por ahora'); return; }
+    if (p.soldOut) { toast(t('p.soldOutToast')); return; }
     openSheet(p, c);
   });
 
@@ -155,24 +173,30 @@
     return {
       id: c.id, name: c.name, price: c.price, items: items, combo: true,
       puffs: puffs, save: regular - c.price,
-      meta: items.length + ' vapes · ' + num(puffs) + ' puffs en total',
+      meta: function () { return t('combo.meta', { n: items.length, p: num(puffs) }); },
     };
   }
   var comboViews = COMBOS.map(comboView);
+  if (!comboViews.length) {
+    $('combos').hidden = true;
+    document.querySelectorAll('a[href="#combos"]').forEach(function (a) { a.hidden = true; });
+  }
   var comboById = {};
   comboViews.forEach(function (c) { comboById[c.id] = c; });
 
-  $('comboRail').innerHTML = comboViews.map(function (c) {
-    return '<button type="button" class="combo reveal" data-combo="' + c.id + '" aria-label="Pedir combo ' + esc(c.name) + ', ' + money(c.price) + '">' +
+  function renderCombos() {
+    $('comboRail').innerHTML = comboViews.map(function (c) {
+    return '<button type="button" class="combo" data-combo="' + c.id + '" aria-label="' + esc(t('combo.order')) + ' ' + esc(c.name) + ', ' + money(c.price) + '">' +
       '<div class="combo__media">' + c.items.map(function (p) {
         return '<img src="' + img(p) + '" alt="" loading="lazy" decoding="async">';
       }).join('') + '</div>' +
       '<div class="combo__body"><span class="combo__name">' + esc(c.name) + '</span>' +
-      '<span class="combo__meta">' + esc(c.meta) + '</span>' +
+      '<span class="combo__meta">' + esc(c.meta()) + '</span>' +
       '<div class="combo__foot"><span class="price">' + money(c.price) + '</span>' +
-      (c.save > 0 ? '<span class="combo__save">Ahorras ' + money(c.save) + '</span>' : '') +
+      (c.save > 0 ? '<span class="combo__save">' + esc(t('combo.save', { x: money(c.save) })) + '</span>' : '') +
       '</div></div></button>';
-  }).join('');
+    }).join('');
+  }
 
   $('comboRail').addEventListener('click', function (e) {
     var b = e.target.closest('.combo');
@@ -185,6 +209,7 @@
   var lastFocus = null;
   var max = CFG.maxQty || 10;
 
+  if (!(CFG.pickupPoints || []).length) $('pickupBox').hidden = true;
   $('spots').innerHTML = (CFG.pickupPoints || []).map(function (s) {
     return '<button type="button" class="chip" data-spot="' + esc(s) + '" aria-pressed="false">' + esc(s) + '</button>';
   }).join('');
@@ -196,12 +221,12 @@
 
     var pics = item.combo ? item.items : [item];
     $('sheetMedia').innerHTML = pics.map(function (p) { return '<img src="' + img(p) + '" alt="">'; }).join('');
-    $('sheetBrand').textContent = item.combo ? 'Combo' : item.brand;
-    $('sheetName').textContent = item.name;
+    $('sheetBrand').textContent = item.combo ? t('combo.label') : item.brand;
+    $('sheetName').textContent = item.combo ? item.name : pname(item);
     $('sheetPuffs').innerHTML = item.combo
-      ? '<span class="puffs">' + ICON_BOLT + esc(item.meta) + '</span>'
+      ? '<span class="puffs">' + ICON_BOLT + esc(item.meta()) + '</span>'
       : puffsPill(item);
-    var note = item.combo ? (item.save > 0 ? 'Ahorras ' + money(item.save) + ' frente a comprarlos por separado.' : '') : (item.note || '');
+    var note = item.combo ? (item.save > 0 ? t('combo.saveNote', { x: money(item.save) }) : '') : pnote(item);
     $('sheetNote').textContent = note;
     $('sheetNote').hidden = !note;
     $('orderError').hidden = true;
@@ -245,7 +270,7 @@
   form.addEventListener('change', function (e) {
     if (e.target.name !== 'mode') return;
     var pickup = mode() === 'pickup';
-    $('pickupBox').hidden = !pickup;
+    $('pickupBox').hidden = !pickup || !(CFG.pickupPoints || []).length;
     $('deliveryBox').hidden = pickup;
     $('orderError').hidden = true;
     if (!pickup) setTimeout(function () { $('place').focus(); }, 50);
@@ -279,48 +304,48 @@
     var name = $('name').value.trim();
 
     $('place').classList.remove('invalid');
-    if (pickup && !order.spot && (CFG.pickupPoints || []).length) return fail('Elige dónde lo vas a recoger.');
-    if (!pickup && !place) return fail('Escribe dónde te lo entregamos.', $('place'));
+    if (pickup && !order.spot && (CFG.pickupPoints || []).length) return fail(t('order.errSpot'));
+    if (!pickup && !place) return fail(t('order.errPlace'), $('place'));
 
-    var lines = ['Hola 👋 Quiero ' + (it.combo ? 'este combo:' : 'este vape:'), ''];
+    var lines = [t(it.combo ? 'msg.hiCombo' : 'msg.hiVape'), ''];
     if (it.combo) {
       lines.push('*' + it.name + '*');
-      lines.push(it.meta);
+      lines.push(it.meta());
     } else {
-      lines.push('*' + it.name + '* — ' + puffsLabel(it));
+      lines.push('*' + pname(it) + '* — ' + puffsLabel(it));
     }
-    lines.push('Cantidad: ' + order.qty);
-    if (flavor) lines.push('Sabor: ' + flavor);
-    lines.push('Total: ' + money(it.price * order.qty));
+    lines.push(t('msg.qty') + ': ' + order.qty);
+    if (flavor) lines.push(t('msg.flavor') + ': ' + flavor);
+    lines.push(t('msg.total') + ': ' + money(it.price * order.qty) + ' USD');
     lines.push('');
-    lines.push(pickup ? '📍 Recoger en: ' + (order.spot || 'por definir') : '🛵 Entregar en: ' + place);
-    if (time) lines.push('🕐 Hora: ' + time);
-    if (name) lines.push('🙋 Nombre: ' + name);
+    lines.push(pickup ? t('msg.pickup') + ': ' + (order.spot || t('msg.tbd')) : t('msg.delivery') + ': ' + place);
+    if (time) lines.push(t('msg.time') + ': ' + time);
+    if (name) lines.push(t('msg.name') + ': ' + name);
 
     store('nb_name', name);
     window.open(waLink(CFG.whatsapp, lines.join('\n')), '_blank', 'noopener');
     closeSheet();
-    toast('Abriendo WhatsApp…');
+    toast(t('msg.opening'));
   });
 
   var savedName = store('nb_name');
   if (savedName) $('name').value = savedName;
 
   // ───────── Wholesale ─────────
-  $('wholesaleBtn').href = waLink(CFG.whatsappWholesale, 'Hola 👋 Quiero información para comprar vapes al por mayor.');
+  function setWholesale() { $('wholesaleBtn').href = waLink(CFG.whatsappWholesale, t('wh.msg')); }
 
   if (!CFG.whatsapp) console.warn('[config] Falta el número de WhatsApp de pedidos en assets/js/config.js');
   if (!CFG.whatsappWholesale) console.warn('[config] Falta el número de WhatsApp mayorista en assets/js/config.js');
 
   // ───────── Age gate ─────────
   var gate = $('gate');
-  if (store('nb_age_ok') !== '1') {
+  if (store('nb_age21_ok') !== '1') {
     gate.hidden = false;
     document.body.classList.add('locked');
     setTimeout(function () { $('gateYes').focus(); }, 50);
   }
   $('gateYes').addEventListener('click', function () {
-    store('nb_age_ok', '1');
+    store('nb_age21_ok', '1');
     gate.hidden = true;
     document.body.classList.remove('locked');
   });
@@ -345,5 +370,19 @@
     document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
   }
 
-  render();
+  // ───────── Idioma ─────────
+  var langBtn = $('langBtn');
+  function applyLang() {
+    I18N.apply();
+    langBtn.textContent = I18N.lang === 'es' ? 'EN' : 'ES';
+    setTitle();
+    setWholesale();
+    renderChips();
+    renderCombos();
+    render();
+  }
+  langBtn.addEventListener('click', function () { I18N.set(I18N.lang === 'es' ? 'en' : 'es'); });
+  I18N.onChange(applyLang);
+
+  applyLang();
 })();

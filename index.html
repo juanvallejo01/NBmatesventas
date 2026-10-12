@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>NBmates · Vapes en la U</title>
-  <meta name="description" content="Catálogo de vapes con entrega en la universidad. Elige tu vape, mira los puffs y pídelo por WhatsApp.">
+  <title>NBmates · Los mejores vapes</title>
+  <meta name="description" content="Los mejores vapes: WAKA premium y Nexa Pix. Pídelo por WhatsApp y recógelo o te lo entregamos.">
   <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235b5bf6'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3ENB%3C/text%3E%3C/svg%3E">
@@ -14,106 +14,110 @@
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-  <a class="skip" href="#catalogo">Ir al catálogo</a>
+  <a class="skip" href="#catalogo" data-i18n="skip">Ir al catálogo</a>
 
   <header class="nav" id="nav">
     <div class="nav__inner">
       <a class="nav__brand" href="#top" data-brand>NBmates</a>
-      <nav class="nav__links" aria-label="Secciones">
-        <a href="#catalogo">Catálogo</a>
-        <a href="#combos">Combos</a>
-        <a href="#como-funciona">Cómo pedir</a>
-        <a href="#mayorista">Al por mayor</a>
+      <nav class="nav__links" aria-label="Secciones" data-i18n-aria="nav.sections">
+        <a href="#catalogo" data-i18n="nav.catalog">Catálogo</a>
+        <a href="#combos" data-i18n="nav.combos">Combos</a>
+        <a href="#como-funciona" data-i18n="nav.how">Cómo pedir</a>
+        <a href="#mayorista" data-i18n="nav.wholesale">Al por mayor</a>
       </nav>
-      <a class="nav__cta" href="#catalogo">Pedir</a>
+      <div class="nav__end">
+        <button class="nav__lang" type="button" id="langBtn" data-i18n-aria="lang.switch" aria-label="Switch to English">EN</button>
+        <a class="nav__cta" href="#catalogo" data-i18n="nav.cta">Pedir</a>
+      </div>
     </div>
   </header>
 
   <main id="top">
     <section class="hero">
       <div class="hero__copy reveal">
-        <p class="eyebrow">Vapes en la U</p>
-        <h1 class="hero__title">Elige tu vape.<br><span class="grad">Te lo llevo al campus.</span></h1>
-        <p class="hero__sub">Más de <strong id="heroCount">80</strong> modelos, de 2.000 hasta 60.000 puffs. Lo pides por WhatsApp y lo recoges o te lo entrego donde estés.</p>
+        <p class="eyebrow" data-i18n="hero.eyebrow">Solo los mejores vapes</p>
+        <h1 class="hero__title" data-i18n-html="hero.title">Los mejores vapes.<br><span class="grad">Te los llevamos.</span></h1>
+        <p class="hero__sub" data-i18n="hero.sub">Seleccionamos solo lo mejor: la línea premium WAKA y Nexa Pix, de 2,000 hasta 36,000 puffs, más baterías. Lo pides por WhatsApp y lo recoges o te lo entregamos donde estés.</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#catalogo">Ver catálogo</a>
-          <a class="btn btn--ghost" href="#combos">Ver combos</a>
+          <a class="btn btn--primary" href="#catalogo" data-i18n="hero.cta">Ver catálogo</a>
+          <a class="btn btn--ghost" href="#combos" data-i18n="hero.combos">Ver combos</a>
         </div>
       </div>
       <div class="hero__art reveal" aria-hidden="true">
         <div class="hero__glow"></div>
-        <img class="hero__img hero__img--l" src="assets/img/products/dojo-sphere-x.webp" alt="" width="360" height="600">
+        <img class="hero__img hero__img--l" src="assets/img/products/waka-nova.webp" alt="" width="360" height="600">
         <img class="hero__img hero__img--c" src="assets/img/products/nexa-pix.webp" alt="" width="420" height="600">
-        <img class="hero__img hero__img--r" src="assets/img/products/tomoro-t1.webp" alt="" width="360" height="600">
+        <img class="hero__img hero__img--r" src="assets/img/products/waka-blast.webp" alt="" width="360" height="600">
       </div>
     </section>
 
-    <section class="facts reveal" aria-label="Resumen">
-      <div class="fact"><strong id="factModels">81</strong><span>modelos</span></div>
-      <div class="fact"><strong>60K</strong><span>puffs máx.</span></div>
-      <div class="fact"><strong>2</strong><span>formas de recibir</span></div>
+    <section class="facts reveal" aria-label="Resumen" data-i18n-aria="facts.aria">
+      <div class="fact"><strong id="factModels">9</strong><span data-i18n="facts.models">modelos</span></div>
+      <div class="fact"><strong>36K</strong><span data-i18n="facts.puffs">puffs máx.</span></div>
+      <div class="fact"><strong>2</strong><span data-i18n="facts.ways">formas de recibir</span></div>
     </section>
 
     <section class="catalog" id="catalogo" aria-labelledby="catTitle">
       <div class="section-head reveal">
-        <h2 id="catTitle">Catálogo</h2>
-        <p>Toca un vape para pedirlo.</p>
+        <h2 id="catTitle" data-i18n="cat.title">Catálogo</h2>
+        <p data-i18n="cat.sub">Solo marcas top. Toca un vape para pedirlo.</p>
       </div>
 
       <div class="toolbar" id="toolbar">
         <div class="search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.96 12.06l4.24 4.24-1.4 1.4-4.24-4.24A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
-          <input id="q" type="search" placeholder="Buscar marca o modelo" autocomplete="off" aria-label="Buscar vape">
+          <input id="q" type="search" placeholder="Buscar marca o modelo" autocomplete="off" aria-label="Buscar vape" data-i18n-ph="search.ph" data-i18n-aria="search.aria">
         </div>
-        <div class="chips" role="tablist" aria-label="Tipo de vape" id="chips"></div>
+        <div class="chips" role="tablist" aria-label="Tipo de vape" data-i18n-aria="chips.aria" id="chips"></div>
         <label class="sort">
-          <span class="sr-only">Ordenar</span>
+          <span class="sr-only" data-i18n="sort.label">Ordenar</span>
           <select id="sort">
-            <option value="puffs-asc">Menos puffs</option>
-            <option value="puffs-desc">Más puffs</option>
-            <option value="price-asc">Más barato</option>
-            <option value="price-desc">Más caro</option>
+            <option value="puffs-asc" data-i18n="sort.puffsAsc">Menos puffs</option>
+            <option value="puffs-desc" data-i18n="sort.puffsDesc">Más puffs</option>
+            <option value="price-asc" data-i18n="sort.priceAsc">Más barato</option>
+            <option value="price-desc" data-i18n="sort.priceDesc">Más caro</option>
           </select>
         </label>
       </div>
 
       <p class="result-count" id="count" aria-live="polite"></p>
       <div class="grid" id="grid"></div>
-      <p class="empty" id="empty" hidden>No encontramos ese vape. Prueba con otra marca.</p>
+      <p class="empty" id="empty" data-i18n="empty" hidden>No encontramos ese vape. Prueba con otra marca.</p>
     </section>
 
     <section class="combos" id="combos" aria-labelledby="comboTitle">
       <div class="section-head reveal">
-        <h2 id="comboTitle">Combos</h2>
-        <p>Más puffs por menos.</p>
+        <h2 id="comboTitle" data-i18n="nav.combos">Combos</h2>
+        <p data-i18n="combos.sub">Más puffs por menos.</p>
       </div>
       <div class="combo-rail" id="comboRail"></div>
     </section>
 
     <section class="how" id="como-funciona" aria-labelledby="howTitle">
       <div class="section-head reveal">
-        <h2 id="howTitle">Así de fácil.</h2>
+        <h2 id="howTitle" data-i18n="how.title">Así de fácil.</h2>
       </div>
       <ol class="steps">
-        <li class="step reveal"><span class="step__n">1</span><h3>Elige tu vape</h3><p>Mira los puffs y el precio de cada modelo.</p></li>
-        <li class="step reveal"><span class="step__n">2</span><h3>Recoger o entrega</h3><p>Dinos si pasas por él o dónde te lo llevamos.</p></li>
-        <li class="step reveal"><span class="step__n">3</span><h3>Confirma por WhatsApp</h3><p>El pedido llega listo al chat. Solo envíalo.</p></li>
+        <li class="step reveal"><span class="step__n">1</span><h3 data-i18n="how.1t">Elige tu vape</h3><p data-i18n="how.1p">Mira los puffs y el precio de cada modelo.</p></li>
+        <li class="step reveal"><span class="step__n">2</span><h3 data-i18n="how.2t">Recoger o entrega</h3><p data-i18n="how.2p">Dinos si pasas por él o dónde te lo llevamos.</p></li>
+        <li class="step reveal"><span class="step__n">3</span><h3 data-i18n="how.3t">Confirma por WhatsApp</h3><p data-i18n="how.3p">El pedido llega listo al chat. Solo envíalo.</p></li>
       </ol>
     </section>
 
     <section class="wholesale reveal" id="mayorista" aria-labelledby="whTitle">
       <div class="wholesale__card">
-        <p class="eyebrow eyebrow--light">Al por mayor</p>
-        <h2 id="whTitle">¿Quieres comprar al por mayor?</h2>
-        <p>Precios especiales por volumen para revender.</p>
-        <a class="btn btn--light" id="wholesaleBtn" href="#" target="_blank" rel="noopener">Haz click aquí</a>
+        <p class="eyebrow eyebrow--light" data-i18n="wh.eyebrow">Al por mayor</p>
+        <h2 id="whTitle" data-i18n="wh.title">¿Quieres comprar al por mayor?</h2>
+        <p data-i18n="wh.sub">Precios especiales por volumen para revender.</p>
+        <a class="btn btn--light" id="wholesaleBtn" href="#" target="_blank" rel="noopener" data-i18n="wh.cta">Haz click aquí</a>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p><strong data-brand>NBmates</strong> · Pedidos por WhatsApp</p>
-    <p class="footer__legal">Venta exclusiva para mayores de 18 años. Los productos contienen nicotina, una sustancia adictiva. Precios en pesos colombianos sujetos a cambio.</p>
+    <p><strong data-brand>NBmates</strong> · <span data-i18n="footer.orders">Pedidos por WhatsApp</span></p>
+    <p class="footer__legal" id="cannabisLegal" hidden><span data-i18n="footer.cannabis"></span> <span data-i18n="footer.license"></span> <strong id="cannabisLicense"></strong></p>
+    <p class="footer__legal" data-i18n="footer.legal">Venta exclusiva para mayores de 21 años. ADVERTENCIA: Este producto contiene nicotina. La nicotina es una sustancia química adictiva. Precios en dólares (USD) sujetos a cambio.</p>
   </footer>
 
   <!-- Hoja de pedido -->
@@ -121,7 +125,7 @@
     <div class="sheet__backdrop" data-close></div>
     <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sheetName">
       <div class="sheet__grab" aria-hidden="true"></div>
-      <button class="icon-btn sheet__close" type="button" data-close aria-label="Cerrar">
+      <button class="icon-btn sheet__close" type="button" data-close aria-label="Cerrar" data-i18n-aria="sheet.close">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4Z"/></svg>
       </button>
 
@@ -137,45 +141,45 @@
 
       <form class="order" id="orderForm" novalidate>
         <div class="field field--row">
-          <span class="field__label">Cantidad</span>
+          <span class="field__label" data-i18n="order.qty">Cantidad</span>
           <div class="stepper">
-            <button type="button" class="stepper__btn" data-step="-1" aria-label="Menos">−</button>
+            <button type="button" class="stepper__btn" data-step="-1" aria-label="Menos" data-i18n-aria="order.less">−</button>
             <output id="qty" aria-live="polite">1</output>
-            <button type="button" class="stepper__btn" data-step="1" aria-label="Más">+</button>
+            <button type="button" class="stepper__btn" data-step="1" aria-label="Más" data-i18n-aria="order.more">+</button>
           </div>
         </div>
 
         <label class="field">
-          <span class="field__label">Sabor <em>(opcional)</em></span>
-          <input id="flavor" type="text" placeholder="Ej: Mango, Blue Razz…" maxlength="60">
+          <span class="field__label" data-i18n-html="order.flavor">Sabor <em>(opcional)</em></span>
+          <input id="flavor" type="text" placeholder="Ej: Mango, Blue Razz…" data-i18n-ph="order.flavorPh" maxlength="60">
         </label>
 
         <fieldset class="field">
-          <legend class="field__label">¿Cómo lo quieres?</legend>
+          <legend class="field__label" data-i18n="order.mode">¿Cómo lo quieres?</legend>
           <div class="segmented" role="radiogroup">
-            <label><input type="radio" name="mode" value="pickup" checked><span>Recoger</span></label>
-            <label><input type="radio" name="mode" value="delivery"><span>Entrega</span></label>
+            <label><input type="radio" name="mode" value="pickup" checked><span data-i18n="order.pickup">Recoger</span></label>
+            <label><input type="radio" name="mode" value="delivery"><span data-i18n="order.delivery">Entrega</span></label>
           </div>
         </fieldset>
 
         <fieldset class="field" id="pickupBox">
-          <legend class="field__label">¿Dónde lo recoges?</legend>
+          <legend class="field__label" data-i18n="order.where">¿Dónde lo recoges?</legend>
           <div class="spot-list" id="spots"></div>
         </fieldset>
 
         <label class="field" id="deliveryBox" hidden>
-          <span class="field__label">¿Dónde te lo entrego?</span>
-          <input id="place" type="text" placeholder="Ej: Bloque 4, salón 302" maxlength="120">
+          <span class="field__label" data-i18n="order.place">¿Dónde te lo entregamos?</span>
+          <input id="place" type="text" placeholder="Ej: 123 Main St, Apt 4B" data-i18n-ph="order.placePh" maxlength="120">
         </label>
 
         <div class="field-pair">
           <label class="field">
-            <span class="field__label">Hora <em>(opcional)</em></span>
-            <input id="time" type="text" placeholder="Ej: 2:30 pm" maxlength="40">
+            <span class="field__label" data-i18n-html="order.time">Hora <em>(opcional)</em></span>
+            <input id="time" type="text" placeholder="Ej: 2:30 pm" data-i18n-ph="order.timePh" maxlength="40">
           </label>
           <label class="field">
-            <span class="field__label">Tu nombre <em>(opcional)</em></span>
-            <input id="name" type="text" placeholder="Ej: Camila" maxlength="60" autocomplete="given-name">
+            <span class="field__label" data-i18n-html="order.name">Tu nombre <em>(opcional)</em></span>
+            <input id="name" type="text" placeholder="Ej: Camila" data-i18n-ph="order.namePh" maxlength="60" autocomplete="given-name">
           </label>
         </div>
 
@@ -188,7 +192,7 @@
           </div>
           <button class="btn btn--primary btn--wa" type="submit">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>
-            Pedir por WhatsApp
+            <span data-i18n="order.submit">Pedir por WhatsApp</span>
           </button>
         </div>
       </form>
@@ -198,18 +202,19 @@
   <!-- Verificación de edad -->
   <div class="gate" id="gate" hidden>
     <div class="gate__card" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
-      <p class="gate__badge">+18</p>
-      <h2 id="gateTitle">¿Eres mayor de edad?</h2>
-      <p>Esta página vende productos con nicotina. Solo pueden comprar mayores de 18 años.</p>
+      <p class="gate__badge">21+</p>
+      <h2 id="gateTitle" data-i18n="gate.title">¿Tienes 21 años o más?</h2>
+      <p id="gateText" data-i18n="gate.text">Esta página vende productos con nicotina. Solo pueden comprar mayores de 21 años.</p>
       <div class="gate__actions">
-        <button class="btn btn--primary" type="button" id="gateYes">Sí, soy mayor de 18</button>
-        <button class="btn btn--ghost" type="button" id="gateNo">No</button>
+        <button class="btn btn--primary" type="button" id="gateYes" data-i18n="gate.yes">Sí, tengo 21 o más</button>
+        <button class="btn btn--ghost" type="button" id="gateNo" data-i18n="gate.no">No</button>
       </div>
-      <p class="gate__deny" id="gateDeny" hidden>Lo sentimos, no puedes ingresar.</p>
+      <p class="gate__deny" id="gateDeny" data-i18n="gate.deny" hidden>Lo sentimos, no puedes ingresar.</p>
     </div>
   </div>
 
   <script src="assets/js/config.js"></script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/products.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
